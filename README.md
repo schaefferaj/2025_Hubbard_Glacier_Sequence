@@ -4,7 +4,7 @@
 
 This dataset provides an enhanced earthquake catalog for the aftershock sequence following the December 6, 2025 Mw 7.0 earthquake in southwestern Yukon, Canada. The earthquake occurred beneath the glaciated terrain of the St. Elias Mountains, near Mt. King George and Hubbard Glacier, along the hypothesized Fairweather–Totschunda Connector fault (CF). The catalog was constructed using automated machine-learning-based detection, association, and location methods applied to continuous seismic waveform data recorded by 39 broadband stations from the Alaska Regional Network (AK), Alaska Volcano Observatory (AV), and Canadian National Seismograph Network (CN), located within approximately 500 km of the mainshock epicentre.
 
-Seismic phase arrivals (P and S) were detected using the Earthquake Transformer (EQTransformer) deep-learning model, implemented via the SeisBench framework (Woollam et al., 2022; Mousavi et al., 2020), with detection thresholds for P and S waves set at 0.1. Phase association was performed using the PyOcto algorithm (Münchmeyer, 2024), guided by the AK135 1D velocity model, requiring a minimum of 5 P-phases and 5 S-phases per event, with at least 5 stations recording both P and S arrivals. Earthquake locations were refined using the NonLinLoc probabilistic location framework (Lomax et al., 2000) with the CN01 1D velocity model and Equal Differential Time (EDT) likelihood formulation. The catalog spans December 6, 2025 through January 6, 2026 and contains 8,243 earthquakes with magnitudes ranging from approximately 1.2 to 6.8 and depths between approximately 5 and 19 km. A total of 187,025 individual phase picks (103,074 P-wave and 83,951 S-wave arrivals) are included. Full methodological details are provided in the accompanying publication (Brillon et al., submitted to Seismica).
+Seismic phase arrivals (P and S) were detected using the Earthquake Transformer (EQTransformer) deep-learning model, implemented via the SeisBench framework (Woollam et al., 2022; Mousavi et al., 2020), with detection thresholds for P and S waves set at 0.1. Phase association was performed using the PyOcto algorithm (Münchmeyer, 2024), guided by the AK135 1D velocity model, requiring a minimum of 5 P-phases and 5 S-phases per event, with at least 5 stations recording both P and S arrivals. Earthquake locations were refined using the NonLinLoc probabilistic location framework (Lomax et al., 2000) with the CN01 1D velocity model and Equal Differential Time (EDT) likelihood formulation. The catalog spans December 6, 2025 through January 6, 2026 and contains 8,409 earthquakes with magnitudes ranging from approximately 1.1 to 6.8 and depths between approximately 1 and 20 km. A total of 190,079 individual phase picks (104,768 P-wave and 85,311 S-wave arrivals) are included. Full methodological details are provided in the accompanying publication (Brillon et al., submitted to Seismica).
 
 ## Citation
 
@@ -20,20 +20,21 @@ You are free to share and adapt this dataset for any purpose, provided appropria
 
 ## File Descriptions
 
-The dataset consists of three CSV files described below. The files are linked through shared identifiers: the `id` field in `event.csv` corresponds to the `eventId` field in `phase.csv`, and the `networkCode`/`stationCode` fields in `phase.csv` correspond to the same fields in `station.csv`.
+The dataset consists of three CSV files described below. The files are linked through shared identifiers: the `id` field in `event.csv` corresponds to the `eventid` field in `phase.csv`, and the `networkCode`/`stationCode` fields in `phase.csv` correspond to the same fields in `station.csv`.
 
 ### event.csv
 
-Each row represents a single detected and located earthquake in the enhanced catalog. The file contains 8,243 events.
+Each row represents a single detected and located earthquake in the enhanced catalog. The file contains 8,409 events.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `id` | Integer | Unique event identifier. Links to the `eventId` field in `phase.csv`. |
-| `isotime` | String (ISO 8601) | Origin time of the earthquake in UTC (e.g., `2025-12-06T00:56:23.883Z`). |
+| `id` | Integer | Unique event identifier. Links to the `eventid` field in `phase.csv`. |
+| `isotime` | String (ISO 8601) | Origin time of the earthquake in UTC (e.g., `2025-12-06T00:56:22.964Z`). |
 | `latitude` | Float | Epicentral latitude in decimal degrees (WGS84). |
 | `longitude` | Float | Epicentral longitude in decimal degrees (WGS84). |
 | `depth` | Float | Hypocentral depth in kilometres below the surface. |
-| `magnitude` | Float | Estimated earthquake magnitude. |
+| `magnitude` | Float | Estimated earthquake magnitude computed from all available station magnitudes. |
+| `magnitude_inliers` | Float | Estimated earthquake magnitude computed using only inlier station magnitudes, with outlier stations excluded. |
 
 ### station.csv
 
@@ -50,11 +51,11 @@ Each row represents one of the 39 seismic stations used to construct the catalog
 
 ### phase.csv
 
-Each row represents a single seismic phase pick (P-wave or S-wave arrival) associated with an event. The file contains 187,025 picks.
+Each row represents a single seismic phase pick (P-wave or S-wave arrival) associated with an event. The file contains 190,079 picks.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `eventId` | Integer | Event identifier linking this pick to the corresponding event in `event.csv`. |
+| `eventid` | Integer | Event identifier linking this pick to the corresponding event in `event.csv` (matches the `id` field). |
 | `isotime` | String (ISO 8601) | Arrival time of the phase pick in UTC. |
 | `lowerUncertainty` | Float | Lower uncertainty bound on the pick time, in seconds. |
 | `upperUncertainty` | Float | Upper uncertainty bound on the pick time, in seconds. |
@@ -73,11 +74,11 @@ station.csv                    event.csv
          |                        |
          |                        |
          +-------> phase.csv <----+
-          (networkCode,     (eventId)
+          (networkCode,     (eventid)
            stationCode)
 ```
 
-Each phase pick in `phase.csv` is linked to exactly one event via the `eventId` field and to exactly one station via the combination of `networkCode` and `stationCode`. A typical event has picks from multiple stations, and a typical station has picks associated with many events.
+Each phase pick in `phase.csv` is linked to exactly one event via the `eventid` field and to exactly one station via the combination of `networkCode` and `stationCode`. A typical event has picks from multiple stations, and a typical station has picks associated with many events.
 
 ## References
 
